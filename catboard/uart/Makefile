@@ -10,7 +10,7 @@ uart.json: uart.v
 
 # Place and Route
 uart_pnr.json: uart.json
-	nextpnr-ice40 --pcf-allow-unconstrained -l nextpnr-uart.log --package ct256 --hx8k --json uart.json --write uart_pnr.json --freq 27 --pcf catboard.pcf
+	nextpnr-ice40 --pcf-allow-unconstrained -l nextpnr-uart.log --package ct256 --hx8k --json uart.json --write uart_pnr.json --freq 100 --pcf catboard.pcf --asc uart.asc
 
 # Generate Bitstream
 uart.bin: uart_pnr.json
