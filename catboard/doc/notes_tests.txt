@@ -4,7 +4,43 @@ make
 
 icepack uart.asc uart.bin
 icetime -d hx8k -c 100 uart.asc
+icetime -d hx8k -c 66 uart.asc
+// Reading input .asc file..
+// Reading 8k chipdb file..
+// Creating timing netlist..
+// Timing estimate: 11.08 ns (90.28 MHz)
+// Checking 15.15 ns (66.00 MHz) clock constraint: PASSED.
 
+scp uart.bin pi4-28:~/
+uart.bin                                      100%  132KB   4.6MB/s   00:00
+
+devel@pi4-28:~ $ sudo config_cat uart.bin 
+
+OK: GPIO 25 exported
+OK: GPIO 17 exported
+OK: GPIO 22 exported
+
+OK: SPI driver loaded
+
+Setting GPIO directions
+out
+out
+in
+Setting output to low
+0
+Reseting FPGA
+0
+1
+Checking DONE pin
+0
+Continuing with configuration procedure
+263+1 records in
+263+1 records out
+135100 bytes (135 kB, 132 KiB) copied, 0.0278748 s, 4.8 MB/s
+Setting output to high
+1
+Checking DONE pin
+1
 make uart_test.o
 
 make test

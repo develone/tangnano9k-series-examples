@@ -23,7 +23,7 @@ load: uart.fs
 
 # Generate Simulation
 uart_test.o: uart.v uart_tb.v
-	iverilog -o uart_test.o -s test uart.v uart_tb.v
+	iverilog  -o uart_test.o -s test uart.v uart_tb.v -DVERILATOR
 
 # Run Simulation
 test: uart_test.o

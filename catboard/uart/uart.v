@@ -2,7 +2,7 @@
 
 module uart
 #(
-    parameter DELAY_FRAMES = 234 // 27,000,000 (27Mhz) / 115200 Baud rate
+    parameter DELAY_FRAMES = 573 // 66,000,000 (66Mhz) / 115200 Baud rate
 )
 (
     input clk,
@@ -26,7 +26,34 @@ localparam RX_STATE_READ_WAIT = 2;
 localparam RX_STATE_READ = 3;
 localparam RX_STATE_STOP_BIT = 5;
 
-always @(posedge clk) begin
+	wire		s_clk;
+`ifdef	VERILATOR
+	assign	s_clk = clk;
+`else
+	wire    clk_66mhz, pll_locked;
+	SB_PLL40_CORE #(
+		.FEEDBACK_PATH("SIMPLE"),
+		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
+		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
+		.PLLOUT_SELECT("GENCLK"),
+		.FDA_FEEDBACK(4'b1111),
+		.FDA_RELATIVE(4'b1111),
+		.DIVR(4'd8),		// Divide by (DIVR+1)
+		.DIVQ(3'd4),		// Divide by 2^(DIVQ)
+		.DIVF(7'd94),		// Multiply by (DIVF+1)
+		.FILTER_RANGE(3'b001)
+	) plli (
+		.REFERENCECLK    (clk        ),
+		.PLLOUTCORE     (clk_66mhz    ),
+		.LOCK           (pll_locked  ),
+		.BYPASS         (1'b0         ),
+		.RESETB         (1'b1         )
+	);
+	assign	s_clk = clk_66mhz;
+    
+`endif
+     
+always @(posedge s_clk) begin
     case (rxState)
         RX_STATE_IDLE: begin
             if (uart_rx == 0) begin
@@ -69,7 +96,7 @@ always @(posedge clk) begin
     endcase
 end
 
-always @(posedge clk) begin
+always @(posedge s_clk) begin
     if (byteReady) begin
         led <= ~dataIn[5:0];
     end
@@ -108,7 +135,7 @@ localparam TX_STATE_WRITE = 2;
 localparam TX_STATE_STOP_BIT = 3;
 localparam TX_STATE_DEBOUNCE = 4;
 
-always @(posedge clk) begin
+always @(posedge s_clk) begin
     case (txState)
         TX_STATE_IDLE: begin
             if (btn1 == 0) begin
