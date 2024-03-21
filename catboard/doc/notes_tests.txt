@@ -1,0 +1,12 @@
+Started work on Makefile 
+make clean
+make
+
+icepack uart.asc uart.bin
+icetime -d hx8k -c 100 uart.asc
+
+make uart_test.o
+
+make test
+
+gtkwave uart.vcd
