@@ -2,7 +2,7 @@
 
 module uart
 #(
-    parameter DELAY_FRAMES = 573 // 66,000,000 (66Mhz) / 115200 Baud rate
+    parameter DELAY_FRAMES = 286 // 66,000,000 (66Mhz) / 234000 Baud rate
 )
 (
     input clk,
